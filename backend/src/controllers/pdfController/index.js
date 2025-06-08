@@ -33,7 +33,7 @@ exports.generatePdf = async (
 
       const settings = await loadSettings();
       const selectedLang = settings['idurar_app_language'];
-      const translate = useLanguage({ selectedLang });
+      const { translate } = useLanguage(selectedLang);
 
       const {
         currency_symbol,

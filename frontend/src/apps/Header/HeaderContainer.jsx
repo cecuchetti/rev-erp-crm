@@ -18,7 +18,7 @@ export default function HeaderContent() {
   const currentAdmin = useSelector(selectCurrentAdmin);
   const { Header } = Layout;
 
-  const translate = useLanguage();
+  const { translate } = useLanguage();
 
   const ProfileDropdown = () => {
     const navigate = useNavigate();

@@ -14,7 +14,7 @@ export const selectMoneyFormat = createSelector(
 
 export const selectAppSettings = createSelector(
   [selectCurrentSettings],
-  (settings) => settings.app_settings
+  (settings) => settings.app_settings || {}
 );
 
 export const selectFinanceSettings = createSelector(
@@ -30,4 +30,9 @@ export const selectCrmSettings = createSelector(
 export const selectCompanySettings = createSelector(
   [selectCurrentSettings],
   (settings) => settings.company_settings
+);
+
+export const selectLang = createSelector(
+  [selectAppSettings],
+  (app_settings) => app_settings && app_settings.idurar_app_language
 );
