@@ -103,3 +103,57 @@ export default function Invoice() {
 
   return <InvoiceDataTableModule config={config} />;
 }
+
+// --- PRODUCTS PAGE START ---
+import ProductDataTableModule from '@/modules/ProductsModule/ProductDataTableModule';
+
+export function Products() {
+  const translate = useLanguage();
+  const entity = 'product';
+
+  const searchConfig = {
+    entity: 'product',
+    displayLabels: ['name'],
+    searchFields: 'name',
+  };
+  const deleteModalLabels = ['name'];
+  const dataTableColumns = [
+    {
+      title: translate('Name'),
+      dataIndex: 'name',
+    },
+    {
+      title: translate('Category'),
+      dataIndex: ['category', 'name'],
+    },
+    {
+      title: translate('Price'),
+      dataIndex: 'price',
+    },
+    {
+      title: translate('Stock'),
+      dataIndex: 'stock',
+    },
+  ];
+
+  const Labels = {
+    PANEL_TITLE: translate('product'),
+    DATATABLE_TITLE: translate('product_list'),
+    ADD_NEW_ENTITY: translate('add_new_product'),
+    ENTITY_NAME: translate('product'),
+  };
+
+  const configPage = {
+    entity,
+    ...Labels,
+  };
+  const config = {
+    ...configPage,
+    dataTableColumns,
+    searchConfig,
+    deleteModalLabels,
+  };
+
+  return <ProductDataTableModule config={config} />;
+}
+// --- PRODUCTS PAGE END ---

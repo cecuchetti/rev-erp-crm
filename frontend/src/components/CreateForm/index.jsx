@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { crud } from '@/redux/crud/actions';
 import { useCrudContext } from '@/context/crud';
 import { selectCreatedItem } from '@/redux/crud/selectors';
+import { generateSKU } from '@/utils/helpers';
 
 import useLanguage from '@/locale/useLanguage';
 
@@ -18,6 +19,16 @@ export default function CreateForm({ config, formElements, withUpload = false })
   const { panel, collapsedBox, readBox } = crudContextAction;
   const [form] = Form.useForm();
   const translate = useLanguage();
+  
+  // Generate SKU for products
+  useEffect(() => {
+    if (entity === 'product' && !form.getFieldValue('sku')) {
+      form.setFieldsValue({ 
+        sku: generateSKU() 
+      });
+    }
+  }, [entity, form]);
+  
   const onSubmit = (fieldsValue) => {
     // Manually trim values before submission
 

@@ -42,28 +42,47 @@ export const erp = {
         payload: null,
       });
 
-      let data = await request.list({ entity, options });
-
-      if (data.success === true) {
-        const result = {
-          items: data.result,
-          pagination: {
-            current: parseInt(data.pagination.page, 10),
-            pageSize: options?.items || 10,
-            total: parseInt(data.pagination.count, 10),
-          },
-        };
+      try {
+        // Clear any cached data first to ensure a fresh load
         dispatch({
-          type: actionTypes.REQUEST_SUCCESS,
+          type: actionTypes.RESET_ACTION,
           keyState: 'list',
-          payload: result,
         });
-      } else {
+
+        let data = await request.list({ entity, options });
+        
+
+        if (data.success === true) {
+          const result = {
+            items: data.result,
+            pagination: {
+              current: parseInt(data.pagination.page, 10),
+              pageSize: options?.items || 10,
+              total: parseInt(data.pagination.count, 10),
+            },
+          };
+          dispatch({
+            type: actionTypes.REQUEST_SUCCESS,
+            keyState: 'list',
+            payload: result,
+          });
+          return result; // Return the result for promise chaining
+        } else {
+          dispatch({
+            type: actionTypes.REQUEST_FAILED,
+            keyState: 'list',
+            payload: null,
+          });
+          return null;
+        }
+      } catch (error) {
+        console.error('Error fetching list:', error);
         dispatch({
           type: actionTypes.REQUEST_FAILED,
           keyState: 'list',
           payload: null,
         });
+        return null;
       }
     },
   create:

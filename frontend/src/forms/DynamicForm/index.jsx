@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DatePicker, Input, Form, Select, InputNumber, Switch, Tag } from 'antd';
+import { DatePicker, Input, Form, Select, InputNumber, Switch, Tag, Row, Col } from 'antd';
 
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import useLanguage from '@/locale/useLanguage';
@@ -10,30 +10,58 @@ import { generate as uniqueId } from 'shortid';
 
 import { countryList } from '@/utils/countryList';
 
-export default function DynamicForm({ fields, isUpdateForm = false }) {
+export default function DynamicForm({ fields, isUpdateForm = false, columns = 1 }) {
   const [feedback, setFeedback] = useState();
 
-  return (
-    <div>
-      {Object.keys(fields).map((key) => {
-        let field = fields[key];
+  // Convert fields object to array of key-value pairs
+  const fieldList = Object.keys(fields).map(key => {
+    let field = fields[key];
+    field.name = key;
+    if (!field.label) field.label = key;
+    return field;
+  }).filter(field => (isUpdateForm && !field.disableForUpdate) || !field.disableForForm);
 
-        if ((isUpdateForm && !field.disableForUpdate) || !field.disableForForm) {
-          field.name = key;
-          if (!field.label) field.label = key;
+  // Split fields into columns
+  const colSpan = 24 / columns;
+  
+  if (columns === 1) {
+    return (
+      <div>
+        {fieldList.map((field) => {
           if (field.hasFeedback)
             return (
-              <FormElement feedback={feedback} setFeedback={setFeedback} key={key} field={field} />
+              <FormElement feedback={feedback} setFeedback={setFeedback} key={field.name} field={field} />
             );
           else if (feedback && field.feedback) {
-            if (feedback == field.feedback) return <FormElement key={key} field={field} />;
+            if (feedback == field.feedback) return <FormElement key={field.name} field={field} />;
           } else {
-            return <FormElement key={key} field={field} />;
+            return <FormElement key={field.name} field={field} />;
           }
-        }
-      })}
-    </div>
-  );
+        })}
+      </div>
+    );
+  } else {
+    return (
+      <Row gutter={16}>
+        {fieldList.map((field, index) => {
+          // Make text area fields span all columns
+          const fieldSpan = field.type === 'textArea' ? 24 : colSpan;
+          
+          return (
+            <Col span={fieldSpan} key={field.name}>
+              {field.hasFeedback ? (
+                <FormElement feedback={feedback} setFeedback={setFeedback} field={field} />
+              ) : feedback && field.feedback ? (
+                feedback == field.feedback ? <FormElement field={field} /> : null
+              ) : (
+                <FormElement field={field} />
+              )}
+            </Col>
+          );
+        })}
+      </Row>
+    );
+  }
 }
 
 function FormElement({ field, feedback, setFeedback }) {
@@ -53,10 +81,10 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
         showSearch={field.showSearch}
-        defaultValue={field.defaultValue}
         style={{
           width: '100%',
         }}
@@ -82,9 +110,9 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
-        defaultValue={field.defaultValue}
         style={{
           width: '100%',
         }}
@@ -137,10 +165,10 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
         showSearch
-        defaultValue={field.defaultValue}
         filterOption={(input, option) =>
           (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
         }
@@ -173,9 +201,9 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
-        defaultValue={field.defaultValue}
         style={{
           width: '100%',
         }}
@@ -200,10 +228,10 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
         mode={'multiple'}
-        defaultValue={field.defaultValue}
         style={{
           width: '100%',
         }}
@@ -226,10 +254,10 @@ function FormElement({ field, feedback, setFeedback }) {
           type: filedType[field.type] ?? 'any',
         },
       ]}
+      initialValue={field.initialValue}
     >
       <Select
         showSearch
-        defaultValue={field.defaultValue}
         optionFilterProp="children"
         filterOption={(input, option) =>
           (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -296,10 +324,10 @@ function FormElement({ field, feedback, setFeedback }) {
 
   const compunedComponent = {
     string: (
-      <Input autoComplete="off" maxLength={field.maxLength} defaultValue={field.defaultValue} />
+      <Input autoComplete="off" maxLength={field.maxLength} />
     ),
     url: <Input addonBefore="http://" autoComplete="off" placeholder="www.example.com" />,
-    textarea: <TextArea rows={4} />,
+    textArea: <TextArea rows={field.rows || 4} />,
     email: <Input autoComplete="off" placeholder="email@example.com" />,
     number: <InputNumber style={{ width: '100%' }} />,
     phone: <Input style={{ width: '100%' }} placeholder="+1 123 456 789" />,
@@ -307,7 +335,6 @@ function FormElement({ field, feedback, setFeedback }) {
       <Switch
         checkedChildren={<CheckOutlined />}
         unCheckedChildren={<CloseOutlined />}
-        defaultValue={true}
       />
     ),
     date: (
@@ -342,7 +369,7 @@ function FormElement({ field, feedback, setFeedback }) {
 
   const filedType = {
     string: 'string',
-    textarea: 'string',
+    textArea: 'string',
     number: 'number',
     phone: 'string',
     //boolean: 'boolean',

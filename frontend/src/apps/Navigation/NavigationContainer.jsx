@@ -66,6 +66,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       label: <Link to={'/invoice'}>{translate('invoices')}</Link>,
     },
     {
+      key: 'products',
+      icon: <TagOutlined />,
+      label: <Link to={'/products'}>{translate('products')}</Link>,
+    },
+    {
       key: 'quote',
       icon: <FileSyncOutlined />,
       label: <Link to={'/quote'}>{translate('quote')}</Link>,

@@ -34,7 +34,7 @@ async function setupApp() {
     };
     await new AdminPassword(AdminPasswordData).save();
 
-    console.log('👍 Admin created : Done!');
+    ('👍 Admin created : Done!');
 
     const Setting = require('../models/coreModels/Setting');
 

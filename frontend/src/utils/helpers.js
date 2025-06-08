@@ -113,3 +113,12 @@ export const validatePhoneNumber = /^(?:[+\d()\-\s]+)$/;
 /*
  Set object value in html
 */
+
+/*
+ Generate a random SKU for products
+*/
+export function generateSKU(prefix = 'PRD') {
+  const randomDigits = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  const timestamp = new Date().getTime().toString().slice(-4);
+  return `${prefix}-${randomDigits}-${timestamp}`;
+}

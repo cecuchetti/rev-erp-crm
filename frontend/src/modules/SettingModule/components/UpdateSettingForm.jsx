@@ -31,8 +31,6 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
       const isChangingLanguage = fieldsValue.idurar_app_language && 
         fieldsValue.idurar_app_language !== localStorage.getItem('language');
       
-      console.log("[DEBUG] Submitting form, values:", fieldsValue);
-      console.log("[DEBUG] isChangingLanguage:", isChangingLanguage);
 
       if (withUpload) {
         if (fieldsValue.file) {
@@ -51,7 +49,6 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
 
       // Special handling for language change
       if (isChangingLanguage) {
-        console.log("[DEBUG] Handling language change to:", fieldsValue.idurar_app_language);
         
         // Update localStorage immediately for language
         localStorage.setItem('language', fieldsValue.idurar_app_language);
@@ -61,7 +58,6 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
           dispatch(settingsAction.updateMany({ entity, jsonData: { settings } }));
           
           // Use our special parameter approach
-          console.log("[DEBUG] Using forceSpanish URL parameter for reliable Spanish change");
           setTimeout(() => {
             window.location.href = window.location.href.split('?')[0] + '?forceSpanish=true';
           }, 300);
@@ -72,7 +68,6 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
         dispatch(settingsAction.updateMany({ entity, jsonData: { settings } }));
         
         // Reload after a delay for language change to take effect
-        console.log("[DEBUG] Reloading page to apply language change");
         setTimeout(() => {
           window.location.reload();
         }, 300);

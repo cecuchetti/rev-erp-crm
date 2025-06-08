@@ -51,9 +51,6 @@ export default function GeneralSettingForm() {
   // Debug current settings and sync form with localStorage
   useEffect(() => {
     if (result && result.app_settings) {
-      console.log("[DEBUG] Current app_settings:", result.app_settings);
-      console.log("[DEBUG] Current language setting:", result.app_settings.idurar_app_language);
-      console.log("[DEBUG] Current localStorage language:", localStorage.getItem('language'));
       
       // Always get the most current language from localStorage
       const localLang = localStorage.getItem('language');
@@ -76,7 +73,6 @@ export default function GeneralSettingForm() {
 
   const handleLanguageChange = async (value) => {
     try {
-      console.log("[DEBUG] Language change requested to:", value);
       
       // Update state immediately
       setCurrentLanguage(value);
@@ -88,32 +84,23 @@ export default function GeneralSettingForm() {
       const settings = [
         { settingKey: 'idurar_app_language', settingValue: value }
       ];
-      
-      console.log("[DEBUG] Sending settings to API:", settings);
-      
+            
       // Use direct API call to ensure it reaches the backend
       const updateResponse = await makeDirectApiCall(
         'setting/updateManySetting', 
         { settings }
       );
-      
-      console.log("[DEBUG] Direct API response:", updateResponse);
-      
-      if (updateResponse.success) {
-        console.log("[DEBUG] Successfully saved language to database");
-        
+            
+      if (updateResponse.success) {        
         // 3. Update Redux store
         dispatch(settingsAction.list({ entity: 'setting' }));
         
         // 4. For Spanish, use special approach
         if (value === 'es_es') {
-          console.log("[DEBUG] Using forceSpanish URL parameter for reliable Spanish change");
           setTimeout(() => {
             window.location.href = window.location.href.split('?')[0] + '?forceSpanish=true';
           }, 500);
         } else {
-          // For other languages
-          console.log("[DEBUG] Reloading page to apply language change");
           setTimeout(() => {
             window.location.href = window.location.href.split('?')[0] + '?lang=' + value;
           }, 500);

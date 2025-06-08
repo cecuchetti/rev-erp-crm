@@ -22,9 +22,15 @@ export default function ReadItem({ config }) {
   const [listState, setListState] = useState([]);
 
   if (fields) readColumns = [...dataForRead({ fields: fields, translate: translate })];
+  
   useEffect(() => {
+    if (!currentResult || !readColumns) {
+      setListState([]);
+      return;
+    }
+    
     const list = [];
-    readColumns.map((props) => {
+    readColumns.forEach((props) => {
       const propsKey = props.dataIndex;
       const propsTitle = props.title;
       const isDate = props.isDate || false;
@@ -33,11 +39,11 @@ export default function ReadItem({ config }) {
       list.push({ propsKey, label: propsTitle, value: value });
     });
     setListState(list);
-  }, [currentResult]);
+  }, [currentResult, readColumns, dateFormat]);
 
   const show = isReadBoxOpen ? { display: 'block', opacity: 1 } : { display: 'none', opacity: 0 };
 
-  const itemsList = listState.map((item) => {
+  const itemsList = listState && listState.length > 0 ? listState.map((item) => {
     return (
       <Row key={item.propsKey} gutter={12}>
         <Col className="gutter-row" span={8}>
@@ -51,7 +57,7 @@ export default function ReadItem({ config }) {
         </Col>
       </Row>
     );
-  });
+  }) : null;
 
   return <div style={show}>{itemsList}</div>;
 }

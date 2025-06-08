@@ -29,7 +29,11 @@ function AddNewItem({ config }) {
   const { ADD_NEW_ENTITY, entity } = config;
 
   const handleClick = () => {
-    navigate(`/${entity.toLowerCase()}/create`);
+    if (entity === 'product') {
+      navigate('/products/create');
+    } else {
+      navigate(`/${entity.toLowerCase()}/create`);
+    }
   };
 
   return (
@@ -166,7 +170,7 @@ export default function DataTable({ config, extra = [] }) {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [entity]);
 
   const filterTable = (value) => {
     const options = { equal: value, filter: searchConfig?.entity };
@@ -182,35 +186,40 @@ export default function DataTable({ config, extra = [] }) {
         backIcon={<ArrowLeftOutlined />}
         extra={[
           <AutoCompleteAsync
-            key={`${uniqueId()}`}
+            key="autocomplete"
             entity={searchConfig?.entity}
             displayLabels={['name']}
             searchFields={'name'}
             onChange={filterTable}
-            // redirectLabel={'Add New Client'}
-            // withRedirect
-            // urlToRedirect={'/customer'}
-          />,
-          <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
+          />, 
+          <Button onClick={handelDataTableLoad} key="refresh" icon={<RedoOutlined />}>
             {translate('Refresh')}
           </Button>,
-
-          !disableAdd && <AddNewItem config={config} key={`${uniqueId()}`} />,
+          !disableAdd && <AddNewItem config={config} key="add" />,
         ]}
         style={{
           padding: '20px 0px',
         }}
       ></PageHeader>
-
-      <Table
-        columns={dataTableColumns}
-        rowKey={(item) => item._id}
-        dataSource={dataSource}
-        pagination={pagination}
-        loading={listIsLoading}
-        onChange={handelDataTableLoad}
-        scroll={{ x: true }}
-      />
+      {dataSource && dataSource.length > 0 ? (
+        <Table
+          columns={dataTableColumns}
+          rowKey={(item) => item._id}
+          dataSource={dataSource}
+          pagination={pagination}
+          loading={listIsLoading}
+          onChange={handelDataTableLoad}
+          scroll={{ x: true }}
+        />
+      ) : (
+        <div style={{ textAlign: 'center', margin: '20px 0' }}>
+          {listIsLoading ? 'Loading...' : 'No data available'}
+          <pre>{JSON.stringify({ dataSource, pagination }, null, 2)}</pre>
+          <Button onClick={dispatcher} type="primary" style={{ marginTop: '10px' }}>
+            Load Data
+          </Button>
+        </div>
+      )}
     </>
   );
 }

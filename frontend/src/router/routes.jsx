@@ -29,6 +29,9 @@ const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
 
+const Products = lazy(() => import('@/pages/Products'));
+const ProductsCreate = lazy(() => import('@/pages/Products/ProductsCreate'));
+
 let routes = {
   expense: [],
   default: [
@@ -56,6 +59,14 @@ let routes = {
     {
       path: '/invoice',
       element: <Invoice />,
+    },
+    {
+      path: '/products',
+      element: <Products />,
+    },
+    {
+      path: '/products/create',
+      element: <ProductsCreate />,
     },
     {
       path: '/invoice/create',
