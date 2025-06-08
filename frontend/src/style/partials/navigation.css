@@ -6,20 +6,76 @@
   top: 0;
   left: 0;
   z-index: 1000;
-  background: #fff;
-  border-right: 1px solid #edf0f5;
+  background: #2d1e4f; /* Dark purple background */
+  border-right: none;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navigation::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navigation::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.navigation::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.navigation .ant-menu {
+  background: #2d1e4f; /* Match sidebar background */
+  border-right: none;
+  padding-top: 10px;
+}
+
+.navigation .ant-menu-item {
+  margin: 4px 16px !important;
+  padding: 10px 16px !important;
+  border-radius: 8px;
+  height: auto;
+}
+
+.navigation .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.navigation .ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.navigation .ant-menu-item-selected::after {
+  display: none;
+}
+
+.navigation .ant-menu-item a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 500;
+}
+
+.navigation .ant-menu-item-selected a {
+  color: white !important;
+}
+
+.navigation .ant-menu-item .anticon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.navigation .ant-menu-item-selected .anticon {
+  color: white;
 }
 
 .logo {
   height: 45px;
-  margin: 15px 15px 30px 30px;
+  margin: 20px 15px 30px 20px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   width: 160px;
 }
 
 .sidebar-wraper {
-  background: #fff;
+  background: #2d1e4f;
   display: block;
 }
 
@@ -29,6 +85,11 @@
 
 .mobile-sidebar-wraper .ant-drawer-body {
   padding: 12px 0px !important;
+  background-color: #2d1e4f;
+}
+
+.mobile-sidebar-wraper .ant-drawer-wrapper-body {
+  background-color: #2d1e4f;
 }
 
 /* .ant-btn.mobile-sidebar-btn {

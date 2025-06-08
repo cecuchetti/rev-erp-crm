@@ -33,20 +33,38 @@ export default function Products() {
     {
       title: translate('Price'),
       dataIndex: 'price',
-      render: (price) => formatCurrency(price),
+      render: (price) => (
+        <span style={{ fontWeight: '500' }}>
+          {formatCurrency(price)}
+        </span>
+      ),
     },
     {
       title: translate('Cost'),
       dataIndex: 'cost',
-      render: (cost) => formatCurrency(cost),
+      render: (cost) => (
+        <span style={{ color: '#666' }}>
+          {formatCurrency(cost)}
+        </span>
+      ),
     },
     {
       title: translate('Stock'),
       dataIndex: 'stock',
       render: (stock, record) => {
         const isLowStock = stock < record.lowStockThreshold;
+        const isOutOfStock = stock === 0;
+        
         return (
-          <span style={{ color: isLowStock && stock > 0 ? 'orange' : stock === 0 ? 'red' : 'inherit' }}>
+          <span 
+            style={{ 
+              fontWeight: '500',
+              color: isOutOfStock ? '#F44336' : isLowStock ? '#FFA000' : '#333',
+              padding: '2px 8px',
+              borderRadius: '12px',
+              backgroundColor: isOutOfStock ? 'rgba(244, 67, 54, 0.1)' : isLowStock ? 'rgba(255, 160, 0, 0.1)' : 'transparent'
+            }}
+          >
             {stock}
           </span>
         );
@@ -56,14 +74,20 @@ export default function Products() {
       title: translate('Status'),
       dataIndex: 'status',
       render: (status) => {
-        let color = 'green';
-        if (status === 'inactive') color = 'orange';
-        if (status === 'discontinued') color = 'red';
         return (
-          <Badge
-            status={status === 'active' ? 'success' : status === 'inactive' ? 'warning' : 'error'}
-            text={status}
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span 
+              style={{ 
+                display: 'inline-block',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: status === 'active' ? '#4CAF50' : status === 'inactive' ? '#FFA000' : '#F44336',
+                marginRight: '8px'
+              }}
+            />
+            <span>{status}</span>
+          </div>
         );
       },
     },

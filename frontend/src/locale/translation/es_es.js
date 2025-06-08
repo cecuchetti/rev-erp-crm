@@ -215,10 +215,12 @@ const lang = {
   offer: 'Oferta',
   invoice: 'Factura',
   quote: 'Cotización',
+  cost: 'Costo',
   payment: 'Pago',
   payments: 'Pagos',
   payments_mode: 'Modos de pago',
   product: 'Producto',
+  product_list: 'Lista de productos',
   product_category: 'Categoría de producto',
   expense: 'Gasto',
   expenses_category: 'Categoría de gastos',
@@ -272,6 +274,7 @@ const lang = {
   add_new_currency: 'Añadir nueva moneda',
   add_new_payment_mode: 'Añadir nuevo modo de pago',
   add_new_tax: 'Añadir nuevo impuesto',
+  add_new_client: 'Añadir nuevo cliente',
   first_name: 'Nombre',
   last_name: 'Apellido',
   phone: 'Teléfono',
@@ -453,6 +456,10 @@ const lang = {
   created_at: 'Creado el',
   updated_at: 'Actualizado el',
   language: 'Idioma',
+  no_data_available: 'No hay datos disponibles',
+  there_are_no_entity_in_your_account_yet: 'No hay {entity}s en tu cuenta todavía',
+  add_your_first_entity: 'Añade tu primer {entity}',
+  load_data: 'Cargar Datos',
 };
 
 export default lang;

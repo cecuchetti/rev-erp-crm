@@ -8,8 +8,11 @@ import {
   RedoOutlined,
   ArrowRightOutlined,
   ArrowLeftOutlined,
+  InboxOutlined,
+  PlusCircleOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Table, Button, Input } from 'antd';
+import { Dropdown, Table, Button, Input, Empty } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,6 +26,49 @@ import { generate as uniqueId } from 'shortid';
 
 import { useCrudContext } from '@/context/crud';
 
+function CustomEmptyState({ entity, onAddNew, onLoadData }) {
+  const translate = useLanguage();
+  
+  return (
+    <Empty
+      image={<InboxOutlined style={{ fontSize: 60, color: '#2d1e4f' }} />}
+      imageStyle={{ height: 80 }}
+      description={
+        <div>
+          <h3 style={{ color: '#2d1e4f', fontWeight: 500, marginBottom: 16 }}>
+            {translate('no_data_available')}
+          </h3>
+          <p style={{ color: '#666', marginBottom: 24 }}>
+            {translate('there_are_no_entity_in_your_account_yet').replace('{entity}', entity)}
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            {onLoadData && (
+              <Button
+                onClick={onLoadData}
+                style={{ borderRadius: '4px' }}
+              >
+                {translate('load_data')}
+              </Button>
+            )}
+            <Button 
+              type="primary" 
+              icon={<PlusCircleOutlined />} 
+              onClick={onAddNew}
+              style={{
+                backgroundColor: '#15a3a8', 
+                borderColor: '#15a3a8',
+                borderRadius: '4px'
+              }}
+            >
+              {translate('add_your_first_entity').replace('{entity}', entity)}
+            </Button>
+          </div>
+        </div>
+      }
+    />
+  );
+}
+
 function AddNewItem({ config }) {
   const { crudContextAction } = useCrudContext();
   const { collapsedBox, panel } = crudContextAction;
@@ -34,7 +80,15 @@ function AddNewItem({ config }) {
   };
 
   return (
-    <Button onClick={handelClick} type="primary">
+    <Button 
+      onClick={handelClick} 
+      type="primary"
+      style={{
+        backgroundColor: '#15a3a8', 
+        borderColor: '#15a3a8',
+        borderRadius: '4px'
+      }}
+    >
       {ADD_NEW_ENTITY}
     </Button>
   );
@@ -96,6 +150,11 @@ export default function DataTable({ config, extra = [] }) {
     collapsedBox.open();
   }
 
+  const handleAddNew = () => {
+    panel.open();
+    collapsedBox.close();
+  };
+
   let dispatchColumns = [];
   if (fields) {
     dispatchColumns = [...dataForTable({ fields, translate, moneyFormatter, dateFormat })];
@@ -149,6 +208,7 @@ export default function DataTable({ config, extra = [] }) {
   const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
 
   const { pagination, items: dataSource } = listResult;
+  const hasNoData = !dataSource || dataSource.length === 0;
 
   const dispatch = useDispatch();
 
@@ -188,8 +248,18 @@ export default function DataTable({ config, extra = [] }) {
             onChange={filterTable}
             placeholder={translate('search')}
             allowClear
+            style={{
+              borderRadius: '4px'
+            }}
           />,
-          <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
+          <Button 
+            onClick={handelDataTableLoad} 
+            key={`${uniqueId()}`} 
+            icon={<RedoOutlined />}
+            style={{
+              borderRadius: '4px'
+            }}
+          >
             {translate('Refresh')}
           </Button>,
 
@@ -197,18 +267,37 @@ export default function DataTable({ config, extra = [] }) {
         ]}
         style={{
           padding: '20px 0px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       ></PageHeader>
 
-      <Table
-        columns={dataTableColumns}
-        rowKey={(item) => item._id}
-        dataSource={dataSource}
-        pagination={pagination}
-        loading={listIsLoading}
-        onChange={handelDataTableLoad}
-        scroll={{ x: true }}
-      />
+      <div style={{ 
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        padding: hasNoData ? '40px 20px' : 0
+      }}>
+        {hasNoData && !listIsLoading ? (
+          <CustomEmptyState entity={entity} onAddNew={handleAddNew} onLoadData={dispatcher} />
+        ) : (
+          <Table
+            columns={dataTableColumns}
+            rowKey={(item) => item._id}
+            dataSource={dataSource}
+            pagination={pagination}
+            loading={listIsLoading}
+            onChange={handelDataTableLoad}
+            scroll={{ x: true }}
+            locale={{
+              emptyText: <CustomEmptyState entity={entity} onAddNew={handleAddNew} onLoadData={dispatcher} />
+            }}
+          />
+        )}
+      </div>
     </>
   );
 }

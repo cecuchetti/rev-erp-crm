@@ -9,8 +9,10 @@ import {
   EllipsisOutlined,
   ArrowRightOutlined,
   ArrowLeftOutlined,
+  InboxOutlined,
+  PlusCircleOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Table, Button } from 'antd';
+import { Dropdown, Table, Button, Empty } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 
 import AutoCompleteAsync from '@/components/AutoCompleteAsync';
@@ -23,6 +25,51 @@ import { generate as uniqueId } from 'shortid';
 import { useNavigate } from 'react-router-dom';
 
 import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
+
+function CustomEmptyState({ entity, onAddNew, isAddDisabled, onLoadData }) {
+  const translate = useLanguage();
+  
+  return (
+    <Empty
+      image={<InboxOutlined style={{ fontSize: 60, color: '#2d1e4f' }} />}
+      imageStyle={{ height: 80 }}
+      description={
+        <div>
+          <h3 style={{ color: '#2d1e4f', fontWeight: 500, marginBottom: 16 }}>
+            {translate('no_data_available')}
+          </h3>
+          <p style={{ color: '#666', marginBottom: 24 }}>
+            {translate('there_are_no_entity_in_your_account_yet').replace('{entity}', entity)}
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            {onLoadData && (
+              <Button
+                onClick={onLoadData}
+                style={{ borderRadius: '4px' }}
+              >
+                {translate('load_data')}
+              </Button>
+            )}
+            {!isAddDisabled && (
+              <Button 
+                type="primary" 
+                icon={<PlusCircleOutlined />} 
+                onClick={onAddNew}
+                style={{
+                  backgroundColor: '#15a3a8', 
+                  borderColor: '#15a3a8',
+                  borderRadius: '4px'
+                }}
+              >
+                {translate('add_your_first_entity').replace('{entity}', entity)}
+              </Button>
+            )}
+          </div>
+        </div>
+      }
+    />
+  );
+}
 
 function AddNewItem({ config }) {
   const navigate = useNavigate();
@@ -37,7 +84,16 @@ function AddNewItem({ config }) {
   };
 
   return (
-    <Button onClick={handleClick} type="primary" icon={<PlusOutlined />}>
+    <Button 
+      onClick={handleClick} 
+      type="primary" 
+      icon={<PlusOutlined />}
+      style={{
+        backgroundColor: '#15a3a8', 
+        borderColor: '#15a3a8',
+        borderRadius: '4px'
+      }}
+    >
       {ADD_NEW_ENTITY}
     </Button>
   );
@@ -52,6 +108,7 @@ export default function DataTable({ config, extra = [] }) {
   const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
 
   const { pagination, items: dataSource } = listResult;
+  const hasNoData = !dataSource || dataSource.length === 0;
 
   const { erpContextAction } = useErpContext();
   const { modal } = erpContextAction;
@@ -107,6 +164,14 @@ export default function DataTable({ config, extra = [] }) {
   const handleRecordPayment = (record) => {
     dispatch(erp.currentItem({ data: record }));
     navigate(`/invoice/pay/${record._id}`);
+  };
+
+  const handleAddNew = () => {
+    if (entity === 'product') {
+      navigate('/products/create');
+    } else {
+      navigate(`/${entity.toLowerCase()}/create`);
+    }
   };
 
   dataTableColumns = [
@@ -191,35 +256,57 @@ export default function DataTable({ config, extra = [] }) {
             displayLabels={['name']}
             searchFields={'name'}
             onChange={filterTable}
+            style={{
+              width: 250,
+              marginRight: 10,
+              borderRadius: '4px'
+            }}
           />, 
-          <Button onClick={handelDataTableLoad} key="refresh" icon={<RedoOutlined />}>
+          <Button 
+            onClick={handelDataTableLoad} 
+            key="refresh" 
+            icon={<RedoOutlined />}
+            style={{
+              borderRadius: '4px'
+            }}
+          >
             {translate('Refresh')}
           </Button>,
           !disableAdd && <AddNewItem config={config} key="add" />,
         ]}
         style={{
           padding: '20px 0px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       ></PageHeader>
-      {dataSource && dataSource.length > 0 ? (
-        <Table
-          columns={dataTableColumns}
-          rowKey={(item) => item._id}
-          dataSource={dataSource}
-          pagination={pagination}
-          loading={listIsLoading}
-          onChange={handelDataTableLoad}
-          scroll={{ x: true }}
-        />
-      ) : (
-        <div style={{ textAlign: 'center', margin: '20px 0' }}>
-          {listIsLoading ? 'Loading...' : 'No data available'}
-          <pre>{JSON.stringify({ dataSource, pagination }, null, 2)}</pre>
-          <Button onClick={dispatcher} type="primary" style={{ marginTop: '10px' }}>
-            Load Data
-          </Button>
-        </div>
-      )}
+      
+      <div style={{ 
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        padding: hasNoData ? '40px 20px' : 0
+      }}>
+        {hasNoData && !listIsLoading ? (
+          <CustomEmptyState entity={entity} onAddNew={handleAddNew} isAddDisabled={disableAdd} onLoadData={dispatcher} />
+        ) : (
+          <Table
+            columns={dataTableColumns}
+            rowKey={(item) => item._id}
+            dataSource={dataSource}
+            pagination={pagination}
+            loading={listIsLoading}
+            onChange={handelDataTableLoad}
+            scroll={{ x: true }}
+            locale={{
+              emptyText: <CustomEmptyState entity={entity} onAddNew={handleAddNew} isAddDisabled={disableAdd} onLoadData={dispatcher} />
+            }}
+          />
+        )}
+      </div>
     </>
   );
 }

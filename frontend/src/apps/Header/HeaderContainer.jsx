@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { Avatar, Dropdown, Layout, Badge, Button } from 'antd';
+import { Avatar, Dropdown, Layout, Badge, Button, Input } from 'antd';
 
 // import Notifications from '@/components/Notification';
 
-import { LogoutOutlined, ToolOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, ToolOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { selectCurrentAdmin } from '@/redux/auth/selectors';
 
@@ -87,43 +87,54 @@ export default function HeaderContent() {
   return (
     <Header
       style={{
-        padding: '20px',
+        padding: '0 20px',
         background: '#ffffff',
         display: 'flex',
-        flexDirection: 'row-reverse',
-        justifyContent: 'flex-start',
-        gap: ' 15px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+        zIndex: 10,
+        height: '64px',
       }}
     >
-      <Dropdown
-        menu={{
-          items,
-        }}
-        trigger={['click']}
-        placement="bottomRight"
-        stye={{ width: '280px', float: 'right' }}
-      >
-        {/* <Badge dot> */}
-        <Avatar
-          className="last"
-          src={currentAdmin?.photo ? FILE_BASE_URL + currentAdmin?.photo : undefined}
-          style={{
-            color: '#f56a00',
-            backgroundColor: currentAdmin?.photo ? 'none' : '#fde3cf',
-            boxShadow: 'rgba(150, 190, 238, 0.35) 0px 0px 10px 2px',
-            float: 'right',
-            cursor: 'pointer',
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <h2 style={{ margin: 0, color: '#2d1e4f', fontWeight: 600 }}>Sales Dashboard</h2>
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <Input 
+          prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+          placeholder={translate('search')}
+          style={{ 
+            width: '250px',
+            borderRadius: '8px',
           }}
-          size="large"
+        />
+        
+        <UpgradeButton />
+        
+        <Dropdown
+          menu={{
+            items,
+          }}
+          trigger={['click']}
+          placement="bottomRight"
         >
-          {currentAdmin?.name?.charAt(0)?.toUpperCase()}
-        </Avatar>
-        {/* </Badge> */}
-      </Dropdown>
-
-      {/* <AppsButton /> */}
-
-      <UpgradeButton />
+          <Avatar
+            className="last"
+            src={currentAdmin?.photo ? FILE_BASE_URL + currentAdmin?.photo : undefined}
+            style={{
+              color: '#f56a00',
+              backgroundColor: currentAdmin?.photo ? 'none' : '#fde3cf',
+              boxShadow: 'rgba(150, 190, 238, 0.35) 0px 0px 10px 2px',
+              cursor: 'pointer',
+            }}
+            size="large"
+          >
+            {currentAdmin?.name?.charAt(0)?.toUpperCase()}
+          </Avatar>
+        </Dropdown>
+      </div>
     </Header>
   );
 }

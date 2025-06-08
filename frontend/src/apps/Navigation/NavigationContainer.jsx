@@ -137,34 +137,38 @@ function Sidebar({ collapsible, isMobile = false }) {
       style={{
         overflow: 'auto',
         height: '100vh',
-
         position: isMobile ? 'absolute' : 'relative',
         bottom: '20px',
         ...(!isMobile && {
-          // border: 'none',
-          ['left']: '20px',
-          top: '20px',
-          // borderRadius: '8px',
+          left: '0',
+          top: '0',
+          borderRadius: '0',
         }),
       }}
-      theme={'light'}
+      theme={'dark'}
     >
       <div
         className="logo"
         onClick={() => navigate('/')}
         style={{
           cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '10px',
         }}
       >
-        <img src={logoIcon} alt="Logo" style={{ marginLeft: '-5px', height: '80px' }} />
+        <img src={logoIcon} alt="Logo" style={{ height: '60px' }} />
       </div>
       <Menu
         items={items}
         mode="inline"
-        theme={'light'}
+        theme={'dark'}
         selectedKeys={[currentPath]}
         style={{
           width: 256,
+          backgroundColor: '#2d1e4f',
+          borderRight: 'none',
         }}
       />
     </Sider>
@@ -193,11 +197,12 @@ function MobileSidebar() {
       </Button>
       <Drawer
         width={250}
-        // style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}
         placement={'left'}
         closable={false}
         onClose={onClose}
         open={visible}
+        className="mobile-sidebar-wraper"
+        bodyStyle={{ padding: 0, backgroundColor: '#2d1e4f' }}
       >
         <Sidebar collapsible={false} isMobile={true} />
       </Drawer>

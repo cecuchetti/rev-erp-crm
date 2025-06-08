@@ -450,6 +450,10 @@ const lang = {
   offers: 'Offers',
   proforma_invoices: 'quote',
   search: 'search',
+  no_data_available: 'No data available',
+  there_are_no_payments_in_your_account_yet: 'There are no payments in your account yet',
+  add_your_first_entity: 'Add your first {entity}',
+  load_data: 'Load Data',
 };
 
 export default lang;
